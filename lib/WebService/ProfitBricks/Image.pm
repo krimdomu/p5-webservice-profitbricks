@@ -10,8 +10,6 @@ use strict;
 use warnings;
 
 use WebService::ProfitBricks::Class;
-
-use WebService::ProfitBricks::Base;
 use base qw(WebService::ProfitBricks);
 
 attr qw/imageId 

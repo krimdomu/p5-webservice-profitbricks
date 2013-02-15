@@ -49,8 +49,6 @@ First you have to create the file I<lib/WebService/ProfitBricks/{{MODEL}}.pm>. Y
  use warnings;
   
  use WebService::ProfitBricks::Class;
-   
- use WebService::ProfitBricks::Base;
  use base qw(WebService::ProfitBricks);
    
  attr qw/attr1
