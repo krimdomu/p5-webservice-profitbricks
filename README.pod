@@ -35,5 +35,93 @@ WebService::ProfitBricks - This is a library to work with the ProfitBricks SOAP 
  my @images = Image->list;
  print Dumper(\@images);
 
+=head1 HACKING
+
+If you want to help finishing this library you can add all the missing models to it.
+
+=head2 HOWTO ADD A MODEL
+
+First you have to create the file I<lib/WebService/ProfitBricks/{{MODEL}}.pm>. You can use this skeleton for a start.
+
+ package WebService::ProfitBricks::{{MODEL}};
+  
+ use strict;
+ use warnings;
+  
+ use WebService::ProfitBricks::Class;
+   
+ use WebService::ProfitBricks::Base;
+ use base qw(WebService::ProfitBricks);
+   
+ attr qw/attr1
+         attr2/;
+  
+ serializer "xml";
+   
+ 1;
+
+=head3 Attributes
+
+You can define all the attributes for the model by extending the I<attr> call with all needed ones.
+
+ attr qw/attr1 attr2 attr3 .../;
+
+=head3 Serialization
+
+The default serialization type is I<xml> with no special container arround it. If you need to use a custom serialization class you can define it with I<serializer>.
+
+You can also add custom options for the serializer here.
+
+ serializer "xml";
+ serializer xml => { container => "arg0" };
+
+Some calls to the ProfitBricks API doesn't need the definition of the container but most do. You have to try which one is the right for you.
+
+=head3 Relations
+
+You can define relations between models with I<has_many> and I<belongs_to>.
+
+=over 4
+
+=item has_many($key, $class, $options)
+
+With I<has_many> you can define a 1-to-n relation to an other model. The name given by $key will be pluralized and used as a method for the object to retrieve the related objects as an array.
+
+The second parameter is the class that should be used to create the related objects.
+
+The third parameter is a hashRef containing additional options for the relation. You have to define the I<through> option so that the class knows which attribute to use to get all the related objects.
+
+ has_many server => "WebService::ProfitBricks::Server" => { through => "servers" };
+
+The I<through> option can also be a code reference. You'll find an example for this in the I<Image> model.
+
+=item belongs_to($key, $class, $options)
+
+With I<belongs_to> you can define a relation to a parent class. The name given by $key will be used as a method for the object to retrieve the related parent object.
+
+The second parameter is the class that should be used to create the related object.
+
+The third parameter is a hashRef containing additional options for the relation. You have to define the I<through> option so that the class knows which attribute to use to get related parent object.
+
+ belongs_to datacenter => "WebService::ProfitBricks::DataCenter" => { through => "dataCenterId" };
+
+=back
+
+=head3 Roles
+
+There are currently two roles for a model. I<list> and I<find>.
+
+ does find => { through => "name" };
+ does list => { through => "getAllImages" };
+
+You can define a role by using I<does($role_name => $options)>.
+
+=over 4
+
+=item does(find => { through => "attribute" })
+
+=item does(list => { through => "soap-function" })
+
+=back
 
 
