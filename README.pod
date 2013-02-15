@@ -10,7 +10,8 @@ WebService::ProfitBricks - This is a library to work with the ProfitBricks SOAP 
 
 =head1 SYNOPSIS
 
- use WebService::ProfitBricks qw/DataCenter/;
+ use Data::Dumper;
+ use WebService::ProfitBricks qw/DataCenter Image/;
  WebService::ProfitBricks->auth('user', 'pass');
     
  my $dc = DataCenter->find("My RZ");
@@ -30,7 +31,9 @@ WebService::ProfitBricks - This is a library to work with the ProfitBricks SOAP 
    
  my $dc = DataCenter->create(dataCenterName => "foo bar blabla", region => "EUROPE");
  $dc->delete;
-    
+      
+ my @images = Image->list;
+ print Dumper(\@images);
 
 
 
