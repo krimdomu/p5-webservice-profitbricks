@@ -100,7 +100,6 @@ sub import {
       
       *{ $caller_pkg . "::" . $name } = sub {
          my $pkg = __PACKAGE__ . "::$name";
-
          eval "use $pkg";
          if($@) {
             die($@);

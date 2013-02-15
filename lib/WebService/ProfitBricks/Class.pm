@@ -71,6 +71,15 @@ sub has_many {
 
    *{ $caller_pkg . "::" . $what } = sub {
       my ($self) = @_;
+
+      my @data;
+      if(ref($self->{$through}) eq "CODE") {
+         @data = &{ $self->{$through} }($self);
+      }
+      else {
+         @data = @{ $self->{$through} };
+      }
+
       return map { $_ = $pkg_class->new(%{ $_ }) } @{ $self->{$through} };
    };
 
