@@ -1,0 +1,30 @@
+=pod
+
+=head1 NAME
+
+WebService::ProfitBricks - This is a library to work with the ProfitBricks SOAP WebService.
+
+=head1 DESCRIPTION
+
+... description ...
+
+=head1 SYNOPSIS
+
+ use WebService::ProfitBricks qw/DataCenter/;
+ WebService::ProfitBricks->auth('user', 'pass');
+    
+ my $dc = DataCenter->find("My RZ");
+    
+ my @dcs = DataCenter->list;
+ for my $dc (@dcs) {
+   print ">> " . $dc->dataCenterName . "\n";
+    
+   for my $srv ($dc->servers) {
+      print "srv>> " . $srv->serverName . "\n";
+      print "dc of srv> " . $srv->datacenter->dataCenterName . "\n";
+   }
+ }
+   
+ $dc->delete;
+
+
