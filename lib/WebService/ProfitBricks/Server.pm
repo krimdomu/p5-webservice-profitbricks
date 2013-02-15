@@ -16,11 +16,18 @@ use base qw(WebService::ProfitBricks);
 
 attr qw/serverId
         serverName
+        cores
+        ram
         ips
+        lanId
         osType
+        internetAccess
         dataCenterId
         dataCenterVersion
+        bootFromImageId
         provisioningState/;
+
+serializer xml => { container => "arg0" };
 
 belongs_to datacenter => "WebService::ProfitBricks::DataCenter" => { through => "dataCenterId" };
 

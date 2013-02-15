@@ -23,6 +23,8 @@ attr qw/dataCenterName
 does find => { through => "dataCenterName" };
 does list => { through => "getAllDataCenters" };
 
-has_many servers => "WebService::ProfitBricks::Server" => { through => "servers" };
+serializer "xml";
+
+has_many server => "WebService::ProfitBricks::Server" => { through => "servers" };
 
 1;

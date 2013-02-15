@@ -22,10 +22,15 @@ sub connection {
    return $connection;
 }
 
+sub get_data {
+   my ($self) = @_;
+   return $self->{__data__};
+}
+
 sub set_data {
    my ($self, $data) = @_;
    for my $key (keys %{ $data }) {
-      $self->{$key} = $data->{$key};
+      $self->{__data__}->{$key} = $data->{$key};
    }
 }
 

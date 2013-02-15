@@ -26,7 +26,7 @@ attr qw/imageId
 does find => { through => "name" };
 does list => { through => "getAllImages" };
 
-has_many servers => "WebService::ProfitBricks::Server" => {
+has_many server => "WebService::ProfitBricks::Server" => {
    through => sub {
       my ($self) = @_;
       map { $_ = { serverId => $_ } } $self->serverIds;

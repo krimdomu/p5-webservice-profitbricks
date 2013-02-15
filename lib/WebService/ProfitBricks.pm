@@ -35,6 +35,10 @@ sub construct {
    my $get_data_func_name = "get$pkg_name";
    my $get_data_func_key   = lcfirst($pkg_name) . "Id";
 
+   if(! exists $self->{__data__}->{$get_data_func_key}) {
+      return;
+   }
+
    # later, this should be rewritten so it will only call the soap iface 
    # if the data someone wanted to use is not present yet
    $self->find_by_id($self->$get_data_func_key);
@@ -55,19 +59,21 @@ sub find_by_id {
    return $self;
 }
 
-sub create {
-   my ($self, %data) = @_;
-
-   $self->set_data(\%data);
+sub save {
+   my ($self) = @_;
 
    my ($pkg_name) = [ split(/::/, ref($self)) ]->[-1];
    my $create_func_name = "create" . $pkg_name;
 
-   my $ret_data = $self->connection->call($create_func_name, %data);
+   my $ret_data = $self->connection->call($create_func_name, xml => $self->to_xml);
 
    $self->set_data($ret_data);
 
    return $self;
+}
+
+sub update {
+   my ($self) = @_;
 }
 
 sub delete {

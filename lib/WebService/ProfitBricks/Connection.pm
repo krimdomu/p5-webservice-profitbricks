@@ -10,22 +10,22 @@ use strict;
 use warnings;
 
 use Data::Dumper;
+use WebService::ProfitBricks::Class;
+
 use WebService::ProfitBricks::Base;
 use base qw(WebService::ProfitBricks::Base);
 
-use SOAP::Lite; # qw(trace);
+use SOAP::Lite; #qw(trace);
 
 my $soap;
 my %auth = ();
 
-sub new {
-   my $that = shift;
-   my $proto = ref($that) || $that;
-   my $self = $proto->SUPER::new(@_);
+attr qw/user password/;
 
-   bless($self, $proto);
+sub construct {
+   my ($self) = @_;
 
-   $auth{$self->{user}} = $self->{password};
+   $auth{$self->user} = $self->password;
    sub SOAP::Transport::HTTP::Client::get_basic_credentials { 
       return %auth;
    }
@@ -45,12 +45,17 @@ sub auth {
 }
 
 sub call {
-   my ($self, $call, %params) = @_;
+   my ($self, $call, %data) = @_;
 
    my @soap_params;
 
-   for my $key (keys %params) {
-      push(@soap_params, SOAP::Data->name($key)->value($params{$key}));
+   if(exists $data{xml}) {
+      push(@soap_params, SOAP::Data->type("xml", $data{xml}));
+   }
+   else {
+      for my $key (keys %data) {
+         push(@soap_params, SOAP::Data->name($key)->value($data{$key}));
+      }
    }
 
    my $resp = $soap->call($call, @soap_params);
