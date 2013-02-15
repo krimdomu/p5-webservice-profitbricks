@@ -15,6 +15,9 @@ WebService::ProfitBricks - This is a library to work with the ProfitBricks SOAP 
     
  my $dc = DataCenter->find("My RZ");
     
+ my $srv = $dc->server->new(cores => 2, ram => 512, serverName => "myserver");
+ $srv->save;
+   
  my @dcs = DataCenter->list;
  for my $dc (@dcs) {
    print ">> " . $dc->dataCenterName . "\n";
@@ -27,6 +30,7 @@ WebService::ProfitBricks - This is a library to work with the ProfitBricks SOAP 
    
  my $dc = DataCenter->create(dataCenterName => "foo bar blabla", region => "EUROPE");
  $dc->delete;
+    
 
 
 
