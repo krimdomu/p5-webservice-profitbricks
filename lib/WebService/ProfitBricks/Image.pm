@@ -13,7 +13,7 @@ use WebService::ProfitBricks::Class;
 use base qw(WebService::ProfitBricks);
 
 attr qw/imageId 
-        name 
+        imageName 
         imageType
         writeable
         cpuHotpluggable
@@ -21,7 +21,7 @@ attr qw/imageId
         region
         osType/;
 
-does find => { through => "name" };
+does find => { through => "imageName" };
 does list => { through => "getAllImages" };
 
 has_many server => "WebService::ProfitBricks::Server" => {

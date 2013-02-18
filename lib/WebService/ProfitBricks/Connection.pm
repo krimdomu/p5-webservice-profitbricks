@@ -15,12 +15,12 @@ use WebService::ProfitBricks::Class;
 use WebService::ProfitBricks::Base;
 use base qw(WebService::ProfitBricks::Base);
 
-use SOAP::Lite; #qw(trace);
+use SOAP::Lite; # qw(trace);
 
 my $soap;
 my %auth = ();
 
-attr qw/user password/;
+attrs qw/user password/;
 
 sub construct {
    my ($self) = @_;

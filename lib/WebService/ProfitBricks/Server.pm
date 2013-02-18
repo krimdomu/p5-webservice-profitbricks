@@ -12,8 +12,7 @@ use warnings;
 use WebService::ProfitBricks::Class;
 use base qw(WebService::ProfitBricks);
 
-attr qw/serverId
-        serverName
+attrs qw/serverId
         cores
         ram
         ips
@@ -23,10 +22,16 @@ attr qw/serverId
         dataCenterId
         dataCenterVersion
         bootFromImageId
+        nics
         provisioningState/;
+
+
+attr serverName => { searchable => 1, find_by => "name", through => "datacenter" };
 
 serializer xml => { container => "arg0" };
 
+has_many eth => "WebService::ProfitBricks::Nic" => { through => "nics" };
 belongs_to datacenter => "WebService::ProfitBricks::DataCenter" => { through => "dataCenterId" };
+
 
 1;

@@ -14,7 +14,7 @@ require Exporter;
 use base qw(Exporter);
 use vars qw(@EXPORT);
 
-@EXPORT = qw(new attr does has_many belongs_to serializer);
+@EXPORT = qw(new attrs attr does has_many belongs_to serializer);
 
 my %FUNC_MAP;
 
@@ -31,8 +31,14 @@ $FUNC_MAP{list} = sub {
 $FUNC_MAP{find} = sub {
    my ($self, $caller_pkg, $option, $search) = @_;
    my $lookup_key = $option->{through};
+   
+   if(wantarray) {
+      grep { $_->$lookup_key eq $search } $self->list;
+   }
+   else {
+      [ grep { $_->$lookup_key eq $search } $self->list ]->[0];
+   }
 
-   [ grep { $_->$lookup_key eq $search } $self->list ]->[0];
 };
 
 sub new {
@@ -86,6 +92,11 @@ sub has_many {
          @data = &{ $through }($self);
       }
       else {
+         # if only one element is in the relation, it will be not a arrayRef...
+         if(ref($current_data->{$through}) eq "HASH") {
+            $current_data->{$through} = [ $current_data->{$through} ];
+         }
+
          @data = @{ $current_data->{$through} || [] };
       }
 
@@ -151,6 +162,52 @@ sub does {
 }
 
 sub attr {
+   my ($attr, $option) = @_;
+   my ($caller_pkg) = caller;
+
+   no strict 'refs';
+
+   *{ $caller_pkg . "::" . $attr } = sub {
+      my ($self, $set) = @_;
+      if(defined $set) {
+         $self->{__data__}->{$attr} = $set;
+      }
+
+      return $self->{__data__}->{$attr};
+   };
+
+   if(exists $option->{searchable} && $option->{searchable}) {
+      my ($pkg_name) = [ split(/::/, $caller_pkg) ]->[-1];
+      my $find_key   = lcfirst($pkg_name) . "Name";
+
+      if(exists $option->{find_by}) {
+         $find_key = $option->{find_by};
+      }
+
+      *{ $caller_pkg . "::find_by_" . $find_key } = sub {
+         my ($self, $find) = @_;
+
+         if(exists $option->{through}) {
+            my $through = $option->{through};
+            my $pl = pluralize(lcfirst($pkg_name));
+            my @data = $self->$through->$pl();
+
+            if(wantarray) {
+               return grep { $_->$find_key eq $find } @data;
+            }
+            else {
+               return [ grep { $_->$attr eq $find } @data ]->[0];
+            }
+         }
+         #$self->connection->call();
+      };
+   }
+
+   use strict;
+
+}
+
+sub attrs {
    my (@has) = @_;
    my ($caller_pkg) = caller;
 

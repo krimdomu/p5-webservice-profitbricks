@@ -9,10 +9,11 @@ package WebService::ProfitBricks::DataCenter;
 use strict;
 use warnings;
 
+use Data::Dumper;
 use WebService::ProfitBricks::Class;
 use base qw(WebService::ProfitBricks);
 
-attr qw/dataCenterName
+attrs qw/dataCenterName
         dataCenterVersion
         dataCenterId 
         region 
@@ -24,5 +25,27 @@ does list => { through => "getAllDataCenters" };
 serializer "xml";
 
 has_many server => "WebService::ProfitBricks::Server" => { through => "servers" };
+
+sub wait_for_provisioning {
+   my ($self) = @_;
+   my $is_ready = 0;
+
+   while($is_ready == 0) {
+      $self->get_state;
+      if(exists $self->{__data__}->{provisioningState} && $self->{__data__}->{provisioningState} eq "AVAILABLE") {
+         $is_ready = 1;
+         last;
+      }
+
+      sleep 3;
+   }
+}
+
+sub get_state {
+   my ($self) = @_;
+   my $data = $self->connection->call("getDataCenterState", dataCenterId => $self->dataCenterId);
+   $self->provisioningState($data);
+}
+
 
 1;
