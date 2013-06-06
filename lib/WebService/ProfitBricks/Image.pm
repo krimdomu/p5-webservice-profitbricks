@@ -12,7 +12,7 @@ use warnings;
 use WebService::ProfitBricks::Class;
 use base qw(WebService::ProfitBricks);
 
-attr qw/imageId 
+attrs qw/imageId 
         imageName 
         imageType
         writeable

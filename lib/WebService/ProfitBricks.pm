@@ -68,12 +68,46 @@ sub save {
    my $ret_data = $self->connection->call($create_func_name, xml => $self->to_xml);
 
    $self->set_data($ret_data);
+   $self->update_data;
+
+   # get and save relations
+   my @relations = $self->get_relations;
+   for my $rel (@relations) {
+      my $rel_name = pluralize($rel->{name});
+#print "(" . ref($self) . ") finding relations through: $rel_name\n";
+      for my $child_obj ($self->$rel_name()) {
+         my $update_ref_key   = lcfirst($pkg_name) . "Id";
+         $child_obj->$update_ref_key($self->$update_ref_key);
+         $child_obj->save;
+      }
+   }
 
    return $self;
 }
 
 sub update {
    my ($self) = @_;
+
+   my ($pkg_name) = [ split(/::/, ref($self)) ]->[-1];
+   my $update_func_name = "update" . $pkg_name;
+
+   my $ret_data = $self->connection->call($update_func_name, xml => $self->to_xml);
+
+   return $self;
+}
+
+sub update_data {
+   my ($self) = @_;
+
+   my ($pkg_name) = [ split(/::/, ref($self)) ]->[-1];
+   my $get_func_name = "get" . $pkg_name;
+   my $get_key   = lcfirst($pkg_name) . "Id";
+
+   my $ret_data = $self->connection->call($get_func_name, $get_key => $self->$get_key);
+
+   #print Dumper($ret_data);
+
+   $self->set_data($ret_data);
 }
 
 sub delete {

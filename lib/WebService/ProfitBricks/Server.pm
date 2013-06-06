@@ -22,6 +22,7 @@ attrs qw/serverId
         dataCenterId
         dataCenterVersion
         bootFromImageId
+        bootFromStorageId
         nics
         provisioningState/;
 

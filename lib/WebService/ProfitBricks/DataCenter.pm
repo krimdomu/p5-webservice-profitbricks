@@ -24,7 +24,9 @@ does list => { through => "getAllDataCenters" };
 
 serializer "xml";
 
-has_many server => "WebService::ProfitBricks::Server" => { through => "servers" };
+has_many server       => "WebService::ProfitBricks::Server"       => { through => "servers" };
+has_many loadbalancer => "WebService::ProfitBricks::LoadBalancer" => { through => "loadBalancers" };
+has_many storage      => "WebService::ProfitBricks::Storage"      => { through => "storages" };
 
 sub wait_for_provisioning {
    my ($self) = @_;

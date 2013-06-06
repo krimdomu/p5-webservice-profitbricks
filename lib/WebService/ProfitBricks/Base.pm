@@ -34,4 +34,6 @@ sub set_data {
    }
 }
 
+sub get_relations { return(); }
+
 1;

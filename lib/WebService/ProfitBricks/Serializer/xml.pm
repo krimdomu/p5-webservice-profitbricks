@@ -26,14 +26,23 @@ sub serialize {
    }
 
    for my $key (keys %{ $data }) {
-      push(@xml, "<$key>" . $data->{$key} . "</$key>");
+      if(ref $data->{$key} eq "ARRAY") {
+         for my $a (@{ $data->{$key} }) {
+            push(@xml, "<${key}>");
+            push(@xml, $a);
+            push(@xml, "</${key}>");
+         }
+      }
+      else {
+         push(@xml, "<$key>" . $data->{$key} . "</$key>");
+      }
    }
 
    if($self->container) {
       push(@xml, "</arg0>");
    }
 
-   return join("\n", @xml);
+   return join("", @xml);
 }
 
 1;

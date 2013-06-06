@@ -14,7 +14,7 @@ require Exporter;
 use base qw(Exporter);
 use vars qw(@EXPORT);
 
-@EXPORT = qw(new attrs attr does has_many belongs_to serializer);
+@EXPORT = qw(new attrs attr does has_many belongs_to serializer pluralize);
 
 my %FUNC_MAP;
 
@@ -31,7 +31,7 @@ $FUNC_MAP{list} = sub {
 $FUNC_MAP{find} = sub {
    my ($self, $caller_pkg, $option, $search) = @_;
    my $lookup_key = $option->{through};
-   
+
    if(wantarray) {
       grep { $_->$lookup_key eq $search } $self->list;
    }
@@ -80,6 +80,13 @@ sub has_many {
 
    no strict 'refs';
 
+   my @old_relations = $caller_pkg->get_relations();
+
+   *{ $caller_pkg . "::get_relations" } = sub {
+      my ($self) = @_;
+      return ({name => $what, through => $through}, @old_relations);
+   };
+
    # function to get related objects
    *{ $caller_pkg . "::" . $what_pl } = sub {
       my ($self) = @_;
@@ -100,7 +107,8 @@ sub has_many {
          @data = @{ $current_data->{$through} || [] };
       }
 
-      return map { $_ = $pkg_class->new(%{ $_ }) } @data;
+                     # only create a new object if $_ is a hashref
+      return map { if(ref($_) eq "HASH") { $_ = $pkg_class->new(%{ $_ }) } else { $_ } } @data;
    };
 
    # function to add related objects
@@ -111,6 +119,12 @@ sub has_many {
       my $get_data_func_key   = lcfirst($pkg_name) . "Id";
 
       my $obj = $pkg_class->new($get_data_func_key => $self->$get_data_func_key);
+
+      if(ref($self->{__data__}->{$through}) eq "HASH") {
+         $self->{__data__}->{$through} = [ $self->{__data__}->{$through} ];
+      }
+
+      push(@{ $self->{__data__}->{$through} }, $obj);
       return $obj;
    };
 
@@ -154,6 +168,11 @@ sub does {
 
    *{ $caller_pkg . "::" . $what } = sub {
       my ($self, @data) = @_;
+
+      if(exists $option->{code}) {
+         $code = $option->{code};
+         return &$code($self, @data);
+      }
 
       return &$code($self, $caller_pkg, $option, @data);
    };
@@ -240,9 +259,14 @@ sub serializer {
 
    no strict 'refs';
    *{ $caller_pkg . "::to_" . $type } = sub {
-      my ($self) = @_;
+      my ($self, %data) = @_;
       my $serializer = $pkg_class->new(%{ $options });
-      return $serializer->serialize($self->get_data);
+      if(keys %data) {
+         return $serializer->serialize({ %data });
+      } else
+      {
+         return $serializer->serialize($self->get_data);
+      }
    };
    use strict;
 }

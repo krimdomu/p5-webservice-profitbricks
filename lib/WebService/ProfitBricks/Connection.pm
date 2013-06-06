@@ -60,6 +60,8 @@ sub call {
 
    my $resp = $soap->call($call, @soap_params);
 
+#   print Dumper($resp);
+
    if(wantarray) {
       my @ret = ($resp->result);
       push(@ret, $resp->paramsout);

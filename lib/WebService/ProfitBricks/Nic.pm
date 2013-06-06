@@ -25,4 +25,12 @@ serializer xml => { container => "arg0" };
 
 belongs_to server => "WebService::ProfitBricks::Server" => { through => "serverId" };
 
+
+#sub setInternetAccess {
+#   my ($self, $has_access) = @_;
+#
+#   my $ret = $self->connection->call("setInternetAccess", nicId => $self->nicId, datacenterId => $self->server->dataCenterId, lanId => $self->lanId, internetAccess => $has_access);
+#   print Dumper($ret);
+#}
+
 1;
