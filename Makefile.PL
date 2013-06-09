@@ -16,7 +16,6 @@ WriteMakefile1(
    NAME => 'WebService::ProfitBricks',
    VERSION_FROM => 'lib/WebService/ProfitBricks.pm',
    PREREQ_PM => \%deps,
-   LICENSE => 'Artistic'
 );
 
 
