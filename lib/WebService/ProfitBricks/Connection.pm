@@ -3,6 +3,16 @@
 # 
 # vim: set ts=3 sw=3 tw=0:
 # vim: set expandtab:
+
+=head1 NAME
+
+WebService::ProfitBricks::Connection - Connection object
+
+=head1 DESCRIPTION
+
+This is the connection object.
+
+=cut
    
 package WebService::ProfitBricks::Connection;
 
@@ -19,6 +29,13 @@ use SOAP::Lite; # qw(trace);
 
 my $soap;
 my %auth = ();
+
+=head1 OPTIONS
+
+If you're connection broke, retry it. Default off. Set to 1 to enable it.
+
+=cut
+our $RETRY = 0;
 
 attrs qw/user password/;
 
@@ -58,7 +75,16 @@ sub call {
       }
    }
 
-   my $resp = $soap->call($call, @soap_params);
+   my ($resp);
+   eval {
+      $resp = $soap->call($call, @soap_params);
+   } or do {
+      if($RETRY) {
+         warn "Retrying transaction\n";
+         sleep 2;
+         return $self->call($call, %data);
+      }
+   };
 
 #   print Dumper($resp);
 

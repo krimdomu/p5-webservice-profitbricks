@@ -3,7 +3,21 @@
 # 
 # vim: set ts=3 sw=3 tw=0:
 # vim: set expandtab:
-   
+
+=head1 NAME
+
+WebService::ProfitBricks::Image - Manages Images
+
+=head1 DESCRIPTION
+
+Manage the images.
+
+=head1 SYNOPSIS
+
+ my @images = Images->list;
+
+=cut
+
 package WebService::ProfitBricks::Image;
 
 use strict;
@@ -31,4 +45,4 @@ has_many server => "WebService::ProfitBricks::Server" => {
    },
 };
 
-1;
+"Mirror Mirror on the wall";

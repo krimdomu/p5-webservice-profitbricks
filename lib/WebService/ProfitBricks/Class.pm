@@ -3,6 +3,34 @@
 # 
 # vim: set ts=3 sw=3 tw=0:
 # vim: set expandtab:
+
+=head1 NAME
+
+WebService::ProfitBricks::Class - Class helper functions
+
+=head1 DESCRIPTION
+
+This is a module exporting some helper functions to ease the creation of objects.
+
+=head1 SYNOPSIS
+
+ package My::Pkg;
+ use WebService::ProfitBricks::Class;
+     
+ has_many foo    => "My::Foo";
+ belongs_to file => "My::File";
+    
+ # the constructor, to extend the provided constructor.
+ sub construct {
+    my ($self, @data) = @_;
+ }
+     
+ 
+=head1 EXPORTED FUNCTIONS
+
+=over 4
+
+=cut
    
 package WebService::ProfitBricks::Class;
 
@@ -41,6 +69,11 @@ $FUNC_MAP{find} = sub {
 
 };
 
+=item new(%data)
+
+A common constructor. It accepts an hash (key, values pairs) and stores this hash. If you need to do more, you can create a function I<construct>.
+
+=cut
 sub new {
    my $that = shift;
    my $proto = ref($that) || $that;
@@ -65,8 +98,16 @@ sub new {
    return $self;
 }
 
+=item has_many($what, $class, $options)
+
+Create a relations to $class over $what.
+
+=cut
 sub has_many {
    my ($what, $pkg_class, $options) = @_;
+
+# disable warnings
+no warnings;
 
    my $what_pl = pluralize($what);
 
@@ -131,6 +172,11 @@ sub has_many {
    use strict;
 }
 
+=item belongs_to($what, $class, $options)
+
+Creates a backward relaion to $class.
+
+=cut
 sub belongs_to {
    my ($what, $pkg_class, $options) = @_;
 
@@ -153,6 +199,9 @@ sub belongs_to {
   
 }
 
+=item does($what, $option)
+
+=cut
 sub does {
    my ($what, $option) = @_;
 
@@ -180,6 +229,11 @@ sub does {
    use strict;
 }
 
+=item attr($attr, $option)
+
+Create a class attribute $attr.
+
+=cut
 sub attr {
    my ($attr, $option) = @_;
    my ($caller_pkg) = caller;
@@ -226,6 +280,11 @@ sub attr {
 
 }
 
+=item attrs(@attributes)
+
+Create multiple attributes for the class.
+
+=cut
 sub attrs {
    my (@has) = @_;
    my ($caller_pkg) = caller;
@@ -246,6 +305,13 @@ sub attrs {
    use strict;
 }
 
+=item serializer($type, $options)
+
+Sets a serializer for the class.
+
+This will create a method $class->to_$type([%data]).
+
+=cut
 sub serializer {
    my ($type, $options) = @_;
 
@@ -283,4 +349,8 @@ sub pluralize {
    }
 }
 
-1;
+=back
+
+=cut
+
+"Use me, if you want to shoot your feet!";

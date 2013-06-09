@@ -3,7 +3,21 @@
 # 
 # vim: set ts=3 sw=3 tw=0:
 # vim: set expandtab:
-   
+
+=head1 NAME
+
+WebService::ProfitBricks::Server - Manage servers.
+
+=head1 DESCRIPTION
+
+Class to manage your servers.
+
+=head1 SYNOPSIS
+
+ my $srv = $dc->server->find_by_name("server01");
+ my $srv = $dc->server->new(cores => 2, ram => 512, lanId => 1, internetAccess => 'true', bootFromStorageId => $store->storageId);
+
+=cut
 package WebService::ProfitBricks::Server;
 
 use strict;
@@ -35,4 +49,4 @@ has_many eth => "WebService::ProfitBricks::Nic" => { through => "nics" };
 belongs_to datacenter => "WebService::ProfitBricks::DataCenter" => { through => "dataCenterId" };
 
 
-1;
+"Guns don't kill people.";

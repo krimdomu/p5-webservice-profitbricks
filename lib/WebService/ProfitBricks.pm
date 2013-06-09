@@ -3,6 +3,58 @@
 # 
 # vim: set ts=3 sw=3 tw=0:
 # vim: set expandtab:
+
+=head1 NAME
+
+WebService::ProfitBricks - ProfitBricks Base Class
+
+=head1 DESCRIPTION
+
+Profitbricks API
+
+This is the first version of the API implementation. This is currently work-in-progress.
+
+With this library it is possible to provision your ProftBricks datacenter with perl. This library will connect to the SOAP webservice of ProfitBricks.
+
+=head1 HELP
+
+If you need help or want to report bugs please feel free to use our issue tracker.
+
+=over 4
+
+=item *
+
+http://github.com/Krimdomu/p5-webservice-profitbricks/issues
+
+=back
+
+=head1 SYNOPSIS
+
+ use WebService::ProfitBricks qw/DataCenter Image IpBlock/;
+ WebService::ProfitBricks->auth($user, $password);
+    
+ Image->list;
+ my $dc = DataCenter->new(dataCenterName => "DC1", region => "EUROPE");
+ $dc->save;
+ $dc->wait_for_provisioning;
+   
+ my $stor1 = $dc->storage->new(size => 50, storageName => "store01", mountImageId => $use_image, profitBricksImagePassword => $root_pw);
+ $stor1->save;
+ $dc->wait_for_provisioning;
+    
+ my $srv1 = $dc->server->new(cores => 1, ram => 512, serverName => "srv01", lanId => 1, bootFromStorageId => $stor1->storageId, internetAccess => 'true');
+ $srv1->save;
+ $dc->wait_for_provisioning;
+
+
+=head1 METHODS
+
+This class inherits from WebService::ProfitBricks::Base.
+This is the base class for all the other ProfitBricks classes. 
+
+=over 4
+
+=cut
    
 package WebService::ProfitBricks;
 
@@ -46,6 +98,13 @@ sub construct {
    return $self;
 }
 
+=item find_by_id($id)
+
+Tries to find a thing with the given $id.
+
+ my $server = $dc->server->find_by_id("a-b-c-d");
+
+=cut
 sub find_by_id {
    my ($self, $id) = @_;
    
@@ -59,6 +118,14 @@ sub find_by_id {
    return $self;
 }
 
+=item save()
+
+This method created the current object at ProfitBricks. Don't call this method if you only want to update an object. Use I<update> instead. 
+
+ my $dc = DataCenter->new(dataCenterName => "DC1", region => "EUROPE");
+ $dc->save;
+
+=cut
 sub save {
    my ($self) = @_;
 
@@ -85,6 +152,15 @@ sub save {
    return $self;
 }
 
+=item update()
+
+Updates an exisisting object at ProfitBricks. If you want to create a new object use the I<save> method instead.
+
+ my $dc = DataCenter->find_by_name("DC1");
+ $dc->dataCenterName("new_name");
+ $dc->update;
+
+=cut
 sub update {
    my ($self) = @_;
 
@@ -110,6 +186,11 @@ sub update_data {
    $self->set_data($ret_data);
 }
 
+=item delete();
+
+This function delete the current object.
+
+=cut
 sub delete {
    my ($self) = @_;
 
@@ -122,6 +203,11 @@ sub delete {
    return 1;
 }
 
+=item auth($user, $password)
+
+Sets the authentication.
+
+=cut
 sub auth {
    my ($class, $_user, $pass) = @_;
 
@@ -153,4 +239,8 @@ sub import {
 
 }
 
-1;
+=back
+
+=cut
+
+"For the Horde!";
