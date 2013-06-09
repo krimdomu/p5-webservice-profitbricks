@@ -20,3 +20,4 @@ doc/bootstrap.pod
 doc/html
 doc/test.pl
 *.txt
+doc
