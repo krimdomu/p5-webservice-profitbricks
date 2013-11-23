@@ -7,7 +7,7 @@ my %deps = (
 WriteMakefile1(
    META_MERGE => {
       resources => {
-         repository => 'https://github.com/krimdomu/webservice-profitbricks',
+         repository => 'https://github.com/krimdomu/p5-webservice-profitbricks',
       },
    },
    #BUILD_REQUIRES => {
